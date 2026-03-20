@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test de Perfil Inversor · Círculo Alpha</title>
+<meta name="description" content="Descubre tu perfil inversor real. 12 preguntas que analizan tu tolerancia al riesgo, sesgos conductuales, conocimiento financiero y horizonte temporal.">
+<meta property="og:title" content="Test de Perfil Inversor · Círculo Alpha">
+<meta property="og:description" content="¿Sabes realmente qué tipo de inversor eres? No el que crees ser. El que eres.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a08;
+    --bg2: #111110;
+    --bg3: #1a1a17;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.14);
+    --text: #f0ede6;
+    --text2: #8a8880;
+    --text3: #5a5855;
+    --gold: #c9a84c;
+    --gold2: #e8c97a;
+    --danger: #c0392b;
+    --danger-bg: rgba(192,57,43,0.08);
+    --serif: 'Instrument Serif', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  html { font-size: 16px; }
+  body {
+    font-family: var(--sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Layout */
+  .page { max-width: 620px; margin: 0 auto; padding: 0 20px; min-height: 100vh; display: flex; flex-direction: column; }
+
+  /* Header */
+  .site-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+  }
+  .logo {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--text2);
+    letter-spacing: 0.02em;
+  }
+  .logo span { color: var(--gold); }
+
+  /* Intro screen */
+  #intro-view { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 20px 0 60px; }
+  .intro-label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+  .intro-title {
+    font-family: var(--serif);
+    font-size: clamp(36px, 6vw, 52px);
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 24px;
+    font-weight: 400;
+  }
+  .intro-title em { font-style: italic; color: var(--text2); }
+  .intro-desc {
+    font-size: 16px;
+    color: var(--text2);
+    line-height: 1.75;
+    margin-bottom: 40px;
+    max-width: 480px;
+  }
+  .intro-meta {
+    display: flex;
+    gap: 28px;
+    margin-bottom: 40px;
+  }
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .meta-value {
+    font-size: 22px;
+    font-family: var(--serif);
+    color: var(--text);
+  }
+  .meta-label {
+    font-size: 12px;
+    color: var(--text3);
+    letter-spacing: 0.04em;
+  }
+  .start-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--gold);
+    color: #0a0a08;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 14px 28px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: var(--sans);
+    transition: background 0.2s ease, transform 0.1s ease;
+    align-self: flex-start;
+  }
+  .start-btn:hover { background: var(--gold2); }
+  .start-btn:active { transform: scale(0.98); }
+
+  /* Test view */
+  #test-view { flex: 1; display: none; flex-direction: column; padding-bottom: 60px; }
+
+  .progress-wrap { margin-bottom: 36px; }
+  .progress-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .progress-label {
+    font-size: 12px;
+    color: var(--text3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .progress-count {
+    font-size: 12px;
+    color: var(--text3);
+  }
+  .progress-track {
+    height: 2px;
+    background: var(--border2);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    border-radius: 2px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .q-area { flex: 1; }
+  .dim-badge {
+    display: inline-block;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .q-text {
+    font-family: var(--serif);
+    font-size: clamp(20px, 3.5vw, 26px);
+    line-height: 1.4;
+    color: var(--text);
+    margin-bottom: 28px;
+    font-weight: 400;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+    text-align: left;
+    font-family: var(--sans);
+    color: var(--text2);
+    font-size: 15px;
+    line-height: 1.5;
+    width: 100%;
+  }
+  .opt:hover {
+    border-color: var(--border2);
+    background: var(--bg3);
+    color: var(--text);
+  }
+  .opt.selected {
+    border-color: var(--gold);
+    background: rgba(201, 168, 76, 0.06);
+    color: var(--text);
+  }
+  .opt-marker {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border2);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+  }
+  .opt.selected .opt-marker {
+    border-color: var(--gold);
+    background: var(--gold);
+  }
+  .opt.selected .opt-marker::after {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #0a0a08;
+  }
+  .opt-text { flex: 1; }
+
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    background: transparent;
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-sm);
+    padding: 11px 20px;
+    font-size: 14px;
+    color: var(--text2);
+    cursor: pointer;
+    font-family: var(--sans);
+    transition: all 0.15s ease;
+  }
+  .nav-btn:hover:not(:disabled) { border-color: var(--border2); color: var(--text); background: var(--bg3); }
+  .nav-btn:disabled { opacity: 0.25; cursor: default; }
+  .nav-btn.primary {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: #0a0a08;
+    font-weight: 500;
+  }
+  .nav-btn.primary:hover:not(:disabled) { background: var(--gold2); border-color: var(--gold2); }
+  .nav-btn.primary:disabled { background: var(--border2); border-color: transparent; color: var(--text3); }
+
+  /* Result view */
+  #result-view { flex: 1; display: none; flex-direction: column; padding-bottom: 60px; }
+
+  .result-anim { animation: slideUp 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .profile-hero {
+    padding: 48px 0 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+  .profile-icon-wrap {
+    font-size: 44px;
+    margin-bottom: 20px;
+    line-height: 1;
+  }
+  .profile-label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  .profile-name {
+    font-family: var(--serif);
+    font-size: clamp(30px, 5vw, 42px);
+    color: var(--text);
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+  .profile-tagline {
+    font-size: 16px;
+    color: var(--text2);
+    font-style: italic;
+    font-family: var(--serif);
+  }
+
+  .scores-section { margin-bottom: 32px; }
+  .scores-title {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 16px;
+    font-weight: 500;
+  }
+  .scores-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .score-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+  }
+  .score-name { font-size: 12px; color: var(--text3); margin-bottom: 10px; }
+  .score-track { height: 2px; background: var(--border2); border-radius: 2px; margin-bottom: 8px; overflow: hidden; }
+  .score-fill { height: 100%; border-radius: 2px; background: var(--gold); }
+  .score-num { font-size: 13px; color: var(--text2); font-weight: 500; }
+
+  .analysis-blocks { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+  .block {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 22px;
+  }
+  .block-title {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+  .block-text {
+    font-size: 15px;
+    color: var(--text2);
+    line-height: 1.75;
+  }
+  .block.warn {
+    border-color: rgba(201, 168, 76, 0.2);
+    background: rgba(201, 168, 76, 0.04);
+  }
+  .block.warn .block-title { color: var(--gold); }
+  .block.warn .block-text { color: var(--text); }
+
+  .cta-block {
+    background: var(--bg3);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 28px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .cta-block h3 {
+    font-family: var(--serif);
+    font-size: 22px;
+    color: var(--text);
+    margin-bottom: 10px;
+    font-weight: 400;
+  }
+  .cta-block p {
+    font-size: 14px;
+    color: var(--text2);
+    margin-bottom: 20px;
+    line-height: 1.7;
+    max-width: 380px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .cta-block .start-btn { align-self: center; margin: 0 auto; }
+
+  .restart-link {
+    display: block;
+    text-align: center;
+    font-size: 13px;
+    color: var(--text3);
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: var(--sans);
+    transition: color 0.15s ease;
+    padding: 8px;
+  }
+  .restart-link:hover { color: var(--text2); }
+
+  @media (max-width: 480px) {
+    .scores-grid { grid-template-columns: 1fr; }
+    .intro-meta { gap: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="site-header">
+    <div class="logo"><span>Círculo</span> Alpha</div>
+    <div style="font-size:12px;color:var(--text3);letter-spacing:0.04em;">Test de perfil inversor</div>
+  </header>
+
+  <!-- INTRO -->
+  <div id="intro-view">
+    <p class="intro-label">Análisis de perfil inversor</p>
+    <h1 class="intro-title">¿Sabes qué tipo de<br>inversor eres <em>realmente</em>?</h1>
+    <p class="intro-desc">No el que crees ser. El que eres cuando el mercado cae un 30% en tres semanas, cuando un insider recomienda algo, cuando llevas meses en rojo. Este test mide eso.</p>
+    <div class="intro-meta">
+      <div class="meta-item">
+        <span class="meta-value">12</span>
+        <span class="meta-label">Preguntas</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-value">4</span>
+        <span class="meta-label">Dimensiones</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-value">~4 min</span>
+        <span class="meta-label">Duración</span>
+      </div>
+    </div>
+    <button class="start-btn" onclick="startTest()">Comenzar el test →</button>
+  </div>
+
+  <!-- TEST -->
+  <div id="test-view">
+    <div class="progress-wrap">
+      <div class="progress-top">
+        <span class="progress-label" id="dim-label">Tolerancia al riesgo</span>
+        <span class="progress-count" id="q-count">1 / 12</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progress" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="q-area" id="q-area"></div>
+    <div class="nav">
+      <button class="nav-btn" id="back-btn" onclick="prevQ()" disabled>← Atrás</button>
+      <button class="nav-btn primary" id="next-btn" onclick="nextQ()" disabled>Siguiente →</button>
+    </div>
+  </div>
+
+  <!-- RESULT -->
+  <div id="result-view"></div>
+</div>
+
+<script>
+const questions = [
+  { dim: "Tolerancia al riesgo", q: "Tienes €10.000 invertidos. En una semana caen a €7.000. ¿Qué haces?", opts: [
+    {t:"Vendo todo para evitar más pérdidas", s:[0,0,0,0]},
+    {t:"Vendo la mitad y espero", s:[1,0,0,0]},
+    {t:"No hago nada, espero la recuperación", s:[2,0,0,0]},
+    {t:"Compro más. Es una oportunidad", s:[3,0,0,0]}
+  ]},
+  { dim: "Tolerancia al riesgo", q: "¿Qué caída máxima de tu cartera podrías soportar sin perder el sueño?", opts: [
+    {t:"Menos del 10%", s:[0,0,0,0]},
+    {t:"Entre 10% y 25%", s:[1,0,0,0]},
+    {t:"Entre 25% y 50%", s:[2,0,0,0]},
+    {t:"Más del 50%, si creo en la tesis", s:[3,0,0,0]}
+  ]},
+  { dim: "Tolerancia al riesgo", q: "Una acción que seguías sube un 40% en un mes sin que hayas invertido. ¿Qué sientes?", opts: [
+    {t:"Alivio de no haber arriesgado", s:[0,0,0,0]},
+    {t:"Algo de pena, pero lo acepto", s:[1,0,0,0]},
+    {t:"Frustración real. Debería haber entrado", s:[2,0,0,0]},
+    {t:"Busco inmediatamente el próximo catalizador similar", s:[3,0,0,0]}
+  ]},
+  { dim: "Horizonte temporal", q: "¿En cuánto tiempo necesitarías poder recuperar el dinero invertido si lo necesitaras?", opts: [
+    {t:"Menos de 1 año", s:[0,0,0,0]},
+    {t:"Entre 1 y 3 años", s:[0,1,0,0]},
+    {t:"Entre 3 y 7 años", s:[0,2,0,0]},
+    {t:"Más de 7 años, o nunca", s:[0,3,0,0]}
+  ]},
+  { dim: "Horizonte temporal", q: "¿Qué porcentaje de tus ahorros totales estás dispuesto a invertir en mercados?", opts: [
+    {t:"Menos del 20%", s:[0,0,0,0]},
+    {t:"Entre 20% y 40%", s:[0,1,0,0]},
+    {t:"Entre 40% y 70%", s:[0,2,0,0]},
+    {t:"Más del 70%", s:[0,3,0,0]}
+  ]},
+  { dim: "Sesgos conductuales", q: "Llevas 3 meses en una posición perdedora del 25%. La tesis original no ha cambiado. ¿Qué haces?", opts: [
+    {t:"Cierro para no empeorar. Prefiero dormir tranquilo", s:[0,0,0,0]},
+    {t:"Espero, pero me cuesta no mirar el precio constantemente", s:[0,0,1,0]},
+    {t:"Mantengo con convicción. El mercado se equivoca", s:[0,0,2,0]},
+    {t:"Analizo si la tesis sigue intacta y decido en frío", s:[0,0,3,0]}
+  ]},
+  { dim: "Sesgos conductuales", q: "Un inversor que admiras recomienda encarecidamente una empresa. Sin investigarla tú, ¿qué haces?", opts: [
+    {t:"Compro directamente. Confío en su criterio", s:[0,0,0,0]},
+    {t:"Compro una posición pequeña de prueba", s:[0,0,1,0]},
+    {t:"La analizo antes de tomar cualquier decisión", s:[0,0,2,0]},
+    {t:"No compro nada que no haya investigado yo mismo", s:[0,0,3,0]}
+  ]},
+  { dim: "Sesgos conductuales", q: "¿Con qué frecuencia revisas el valor de tu cartera?", opts: [
+    {t:"Varias veces al día", s:[0,0,0,0]},
+    {t:"Una vez al día", s:[0,0,1,0]},
+    {t:"Semanalmente", s:[0,0,2,0]},
+    {t:"Mensualmente o menos", s:[0,0,3,0]}
+  ]},
+  { dim: "Conocimiento financiero", q: "¿Cuál de estos conceptos conoces y aplicas en tu toma de decisiones?", opts: [
+    {t:"Ninguno, todavía estoy aprendiendo", s:[0,0,0,0]},
+    {t:"PER, dividendos y diversificación básica", s:[0,0,0,1]},
+    {t:"EV/EBITDA, ciclos macro y gestión de riesgo", s:[0,0,0,2]},
+    {t:"Todos los anteriores más análisis técnico y opciones", s:[0,0,0,3]}
+  ]},
+  { dim: "Conocimiento financiero", q: "¿Cómo describes tu relación con la macroeconomía global?", opts: [
+    {t:"No la sigo, me centro en empresas concretas", s:[0,0,0,0]},
+    {t:"La observo, pero no la uso para invertir", s:[0,0,0,1]},
+    {t:"Uso la macro para definir sectores y timing", s:[0,0,0,2]},
+    {t:"Es el eje central de mi estrategia de asignación", s:[0,0,0,3]}
+  ]},
+  { dim: "Conocimiento financiero", q: "El BCE sube tipos 50pb de forma inesperada. ¿Cuál es tu primera reflexión inversora?", opts: [
+    {t:"No sabría cómo interpretarlo para mis posiciones", s:[0,0,0,0]},
+    {t:"Reduciría exposición general por precaución", s:[0,0,0,1]},
+    {t:"Revisaría impacto en utilities, inmobiliario y bancos", s:[0,0,0,2]},
+    {t:"Analizaría curva de tipos, dólar, earnings y flujos de capital", s:[0,0,0,3]}
+  ]},
+  { dim: "Tolerancia al riesgo", q: "¿Qué tipo de inversiones te generan más confianza ahora mismo?", opts: [
+    {t:"Depósitos y renta fija de alta calidad", s:[0,0,0,0]},
+    {t:"ETFs diversificados de renta variable", s:[1,0,0,0]},
+    {t:"Acciones individuales con alta convicción", s:[2,0,0,0]},
+    {t:"Activos de alta volatilidad: crypto, small caps, derivados", s:[3,0,0,0]}
+  ]}
+];
+
+const profiles = [
+  {
+    name: "El Guardián del Capital", icon: "🏛️", tagline: "Preservar es tu primera victoria",
+    min: 0, max: 12,
+    fortaleza: "Tu disciplina para evitar pérdidas permanentes es tu mayor activo. Mientras otros capitalizan el FOMO, tú proteges lo construido. En mercados bajistas, eso vale más que cualquier alfa.",
+    errores: "<strong>1. Huir hacia la liquidez en el peor momento.</strong> Vender en pánico y quedarse en cash justo cuando el mercado toca suelo es el error clásico del perfil conservador. El coste real no es la caída — es perderse la recuperación.<br><br><strong>2. Confundir seguridad con ausencia de riesgo.</strong> El dinero en cuenta corriente parece seguro. No lo es: la inflación lo erosiona de forma silenciosa y constante. La inacción también tiene precio.<br><br><strong>3. Mover el umbral de tolerancia hacia abajo con la edad.</strong> Ser conservador no significa serlo más cada año. Muchos inversores de este perfil reducen exposición progresivamente hasta que su capital ya no trabaja para ellos.",
+    enemigo: "Tu mayor enemigo en el mercado es la <strong>aversión a la pérdida extrema</strong>. El cerebro humano siente el dolor de perder €1.000 aproximadamente el doble que el placer de ganar €1.000. En tu caso ese sesgo está amplificado: cada corrección se percibe como una amenaza existencial, lo que te lleva a tomar decisiones de protección en los peores momentos posibles. El mercado lo sabe, y se aprovecha.",
+    advertencia: "Tu principal riesgo no es el mercado: es la inflación erosionando silenciosamente tu capital. El exceso de prudencia también tiene coste, y ese coste se mide en décadas."
+  },
+  {
+    name: "El Constructor Paciente", icon: "🌱", tagline: "Crecimiento sostenido, sin sustos",
+    min: 13, max: 22,
+    fortaleza: "Combinas prudencia con ambición de largo plazo. Eso es raro y valioso: la mayoría elige uno de los dos extremos. Tu disposición a aguantar volatilidad sin reaccionar emocionalmente es una ventaja estructural.",
+    errores: "<strong>1. El sesgo del anclaje al precio de compra.</strong> Tomar como referencia el precio al que entraste para decidir cuándo salir es uno de los errores más costosos y más comunes en este perfil. El mercado no sabe a qué precio compraste tú, y no le importa.<br><br><strong>2. Diversificar por diversificar.</strong> Muchos constructores pacientes acaban con carteras de 30 posiciones sin convicción real en ninguna. La diversificación protege del riesgo específico, pero también diluye el alfa hasta hacerlo irrelevante.<br><br><strong>3. Ignorar el contexto macro.</strong> Invertir a largo plazo no significa ignorar el ciclo. Entrar en determinados activos en el momento equivocado del ciclo puede convertir un buen horizonte temporal en un calvario innecesario.",
+    enemigo: "Tu mayor enemigo en el mercado es la <strong>complacencia en los bull markets</strong>. Cuando todo sube, el Constructor Paciente se relaja: deja de revisar tesis, tolera posiciones mediocres y confunde el ruido alcista con convicción propia. La trampa llega siempre en el mismo momento: cuando el mercado gira y descubres que no tenías tesis — tenías momentum.",
+    advertencia: "Tu sesgo más probable es el anclaje: tomar el precio de compra como referencia para decisiones futuras. El mercado no sabe a qué precio entraste tú, y no le importa."
+  },
+  {
+    name: "El Estratega Analítico", icon: "♟️", tagline: "El análisis es tu ventaja competitiva",
+    min: 23, max: 32,
+    fortaleza: "Tu capacidad de separar el ruido de la señal y tomar decisiones basadas en análisis real es tu moat. El mercado premia sistemáticamente a quienes piensan cuando otros sienten.",
+    errores: "<strong>1. Análisis sin acción.</strong> El Estratega Analítico puede caer en la parálisis: siempre hay otra variable que estudiar, otro dato que esperar. El análisis perfecto que llega tarde vale menos que el análisis suficiente ejecutado a tiempo.<br><br><strong>2. Sobreestimar la ventaja informacional.</strong> En mercados líquidos y eficientes, el edge analítico es más pequeño de lo que parece. El error clásico es construir tesis muy elaboradas sobre activos que millones de profesionales también analizan cada día.<br><br><strong>3. Ignorar el sizing.</strong> Tener razón en la dirección y perder dinero por no dimensionar bien la posición es frustrante y evitable. El análisis de la tesis y el análisis del riesgo son dos ejercicios distintos — muchos estrategas solo hacen el primero.",
+    enemigo: "Tu mayor enemigo en el mercado es el <strong>overconfidence post-acierto</strong>. Después de una operación brillante, el cerebro sobreestima sistemáticamente las propias capacidades. El Estratega Analítico es especialmente vulnerable aquí: su bagaje intelectual le da argumentos para justificar cualquier decisión, incluso las malas. La inteligencia, en el mercado, puede ser una trampa.",
+    advertencia: "El overconfidence es tu enemigo silencioso. Cuanto más análisis haces, más tentado estás de sobreestimar tu ventaja informacional. El mercado puede permanecer irracional más tiempo del que tú puedes permanecer solvente."
+  },
+  {
+    name: "El Cazador de Alfa", icon: "🎯", tagline: "Alta convicción, alta recompensa",
+    min: 33, max: 48,
+    fortaleza: "Tu tolerancia real al riesgo y tu conocimiento financiero te dan acceso a un universo de oportunidades que la mayoría descarta por miedo. Eso, combinado con disciplina analítica, es una ventaja objetiva y poco común.",
+    errores: "<strong>1. Confundir convicción con certeza.</strong> Alta convicción en una tesis es una ventaja. Certeza absoluta es el inicio de la ruina. El Cazador de Alfa a menudo sube el tamaño de posición justo cuando más seguro se siente — que es exactamente cuando más vulnerable está.<br><br><strong>2. No definir el stop antes de entrar.</strong> En activos de alta volatilidad, improvisar la salida en tiempo real bajo presión emocional es una garantía de malas decisiones. El stop se define en frío, antes de abrir la posición, siempre.<br><br><strong>3. Acumular correlaciones ocultas.</strong> Una cartera de small caps, crypto y derivados parece diversificada. En momentos de crisis de liquidez, todo cae a la vez. El riesgo real no es la suma de riesgos individuales — es la correlación que aparece cuando más duele.",
+    enemigo: "Tu mayor enemigo en el mercado es la <strong>euforia de racha</strong>. Después de varios aciertos consecutivos, el Cazador de Alfa entra en un estado de flujo peligroso: aumenta el tamaño, reduce el análisis, ignora las señales de alerta. El mercado tiene una habilidad especial para destruir capital justo cuando el operador se siente invencible. La disciplina no es opcional en este perfil — es la única razón por la que los buenos siguen en el juego.",
+    advertencia: "Tu mayor riesgo eres tú mismo en momentos de euforia. La alta tolerancia al riesgo se convierte en autodestrucción cuando confundes convicción con certeza. Define los stops antes de entrar, siempre, sin excepciones."
+  }
+];
+
+let current = 0;
+let answers = new Array(12).fill(null);
+
+function startTest() {
+  document.getElementById('intro-view').style.display = 'none';
+  const tv = document.getElementById('test-view');
+  tv.style.display = 'flex';
+  renderQ();
+}
+
+function renderQ() {
+  const q = questions[current];
+  document.getElementById('dim-label').textContent = q.dim;
+  document.getElementById('q-count').textContent = (current + 1) + ' / ' + questions.length;
+  document.getElementById('progress').style.width = ((current / questions.length) * 100) + '%';
+  document.getElementById('back-btn').disabled = current === 0;
+  const nextBtn = document.getElementById('next-btn');
+  nextBtn.disabled = answers[current] === null;
+  nextBtn.textContent = current === questions.length - 1 ? 'Ver mi perfil →' : 'Siguiente →';
+
+  const area = document.getElementById('q-area');
+  area.innerHTML = '<p class="dim-badge">' + q.dim + '</p>' +
+    '<p class="q-text">' + q.q + '</p>' +
+    '<div class="options">' +
+    q.opts.map(function(o, i) {
+      var sel = answers[current] === i ? ' selected' : '';
+      return '<button class="opt' + sel + '" onclick="selectOpt(' + i + ')">' +
+        '<span class="opt-marker"></span>' +
+        '<span class="opt-text">' + o.t + '</span>' +
+        '</button>';
+    }).join('') +
+    '</div>';
+}
+
+function selectOpt(i) {
+  answers[current] = i;
+  var opts = document.querySelectorAll('.opt');
+  opts.forEach(function(b, j) {
+    if (j === i) b.classList.add('selected');
+    else b.classList.remove('selected');
+  });
+  document.getElementById('next-btn').disabled = false;
+}
+
+function prevQ() {
+  if (current > 0) { current--; renderQ(); }
+}
+
+function nextQ() {
+  if (answers[current] === null) return;
+  if (current < questions.length - 1) { current++; renderQ(); }
+  else showResult();
+}
+
+function computeScores() {
+  var dims = [0, 0, 0, 0];
+  answers.forEach(function(a, qi) {
+    if (a === null) return;
+    questions[qi].opts[a].s.forEach(function(v, d) { dims[d] += v; });
+  });
+  return {
+    riesgo: Math.round((dims[0] / 15) * 100),
+    horizonte: Math.round((dims[1] / 6) * 100),
+    sesgo: Math.round((dims[2] / 9) * 100),
+    conocimiento: Math.round((dims[3] / 9) * 100),
+    total: dims[0] + dims[1] + dims[2] + dims[3]
+  };
+}
+
+function showResult() {
+  document.getElementById('test-view').style.display = 'none';
+  var scores = computeScores();
+  var profile = profiles.find(function(p) { return scores.total >= p.min && scores.total <= p.max; }) || profiles[1];
+  var rv = document.getElementById('result-view');
+  rv.style.display = 'flex';
+  rv.innerHTML = '<div class="result-anim" style="flex:1;display:flex;flex-direction:column;">' +
+    '<div class="profile-hero">' +
+      '<div class="profile-icon-wrap">' + profile.icon + '</div>' +
+      '<p class="profile-label">Tu perfil inversor</p>' +
+      '<h2 class="profile-name">' + profile.name + '</h2>' +
+      '<p class="profile-tagline">' + profile.tagline + '</p>' +
+    '</div>' +
+    '<div class="scores-section">' +
+      '<p class="scores-title">Puntuación por dimensión</p>' +
+      '<div class="scores-grid">' +
+        scoreCard('Tolerancia al riesgo', scores.riesgo) +
+        scoreCard('Horizonte temporal', scores.horizonte) +
+        scoreCard('Control de sesgos', scores.sesgo) +
+        scoreCard('Conocimiento financiero', scores.conocimiento) +
+      '</div>' +
+    '</div>' +
+    '<div class="analysis-blocks">' +
+      '<div class="block"><p class="block-title">Tu mayor fortaleza</p><p class="block-text">' + profile.fortaleza + '</p></div>' +
+      '<div class="block"><p class="block-title">Los 3 errores típicos de tu perfil</p><p class="block-text">' + profile.errores + '</p></div>' +
+      '<div class="block"><p class="block-title">Tu mayor enemigo en el mercado</p><p class="block-text">' + profile.enemigo + '</p></div>' +
+      '<div class="block warn"><p class="block-title">⚠ Advertencia conductual</p><p class="block-text">' + profile.advertencia + '</p></div>' +
+    '</div>' +
+    '<div class="cta-block">' +
+      '<h3>Lleva tu perfil al siguiente nivel</h3>' +
+      '<p>En Círculo Alpha analizamos mercados, macro y oportunidades de inversión cada semana con el mismo nivel de rigor aplicado a casos reales.</p>' +
+      '<a href="https://inversornovato.substack.com/subscribe?utm_source=menu&simple=true&next=https%3A%2F%2Finversornovato.substack.com%2F" style="text-decoration:none"><button class="start-btn">Acceder a Círculo Alpha →</button></a>' +
+    '</div>' +
+    '<button class="restart-link" onclick="restartTest()">Repetir el test</button>' +
+  '</div>';
+}
+
+function scoreCard(label, val) {
+  return '<div class="score-card">' +
+    '<p class="score-name">' + label + '</p>' +
+    '<div class="score-track"><div class="score-fill" style="width:' + val + '%"></div></div>' +
+    '<p class="score-num">' + val + ' / 100</p>' +
+  '</div>';
+}
+
+function restartTest() {
+  current = 0;
+  answers = new Array(12).fill(null);
+  document.getElementById('result-view').style.display = 'none';
+  document.getElementById('result-view').innerHTML = '';
+  document.getElementById('intro-view').style.display = 'flex';
+  document.getElementById('intro-view').style.flexDirection = 'column';
+}
+</script>
+</body>
+</html>
